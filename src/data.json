@@ -1,0 +1,92 @@
+{
+  "records": [
+    {
+      "customer": "IBBP Apps",
+      "company": "H&R Real Inc.",
+      "contact": "Jerome R. Camacho - eromeRCamacho@dayrep.com",
+      "address": "3982 Rose Street, Dublin, CA 94568",
+      "revenue": 236081.48,
+      "VAT": 4965,
+      "totalPrice": 780469.18,
+      "status": "FINISHED",
+      "date": "2014-03-07"
+    },
+    {
+      "customer": "SRA-General Contacts",
+      "company": "Rossi Auto Parts",
+      "contact": "Denise M. Briggs - DeniseMBriggs@dayrep.com",
+      "address": "7920 Glenlake Avenue, Ankeny, IA 50023",
+      "revenue": 2118.04,
+      "VAT": 7710,
+      "totalPrice": 945325.48,
+      "status": "ETA",
+      "date": "2014-03-08"
+    },
+    {
+      "customer": "CCST",
+      "company": "Hudson's MensWear",
+      "contact": "Sheryl G. Dorsey - SherylGDorsey@jourrapide.com",
+      "address": "42 West Arch Drive Windermere, FL 34786",
+      "revenue": 840817.61,
+      "VAT": 2841,
+      "totalPrice": 734730.96,
+      "status": "WIP",
+      "date": "2014-03-09"
+    },
+    {
+      "customer": "Accupure",
+      "company": "Lum's",
+      "contact": "Iris D. Hurtado - IrisDHurtado@jourrapide.com",
+      "address": "4275 Gordon Street, Ontario, CA 91761",
+      "revenue": 625961.56,
+      "VAT": 8869,
+      "totalPrice": 304578.4,
+      "status": "FINISHED",
+      "date": "2014-03-10"
+    },
+    {
+      "customer": "El Tools",
+      "company": "Wholesale Club, Inc.",
+      "contact": "William S. Arnold - williamSArnold@armyspy.com",
+      "address": "2178 Rardin Drive, Mountain View, CA 94041",
+      "revenue": 723016.54,
+      "VAT": 8211,
+      "totalPrice": 5749.86,
+      "status": "ETA",
+      "date": "2014-04-17"
+    },
+    {
+      "customer": "IBBP Apps",
+      "company": "Atco Ltd.",
+      "contact": "Gary M. Webb - GaryMWebb@rhyta.com",
+      "address": "1596 Bridge Avenue, Lafayette, LA 70501",
+      "revenue": 598591.34,
+      "VAT": 8216,
+      "totalPrice": 328491.47,
+      "status": "ETA",
+      "date": "2014-04-18"
+    },
+    {
+      "customer": "Accupure",
+      "company": "Lum's",
+      "contact": "Rebecca M. Gosser - RebeccaMGosser@armyspy.com",
+      "address": "4275 Gordon Street, Ontario, CA 91761",
+      "revenue": 988144.9,
+      "VAT": 3844,
+      "totalPrice": 329087.77,
+      "status": "ETA",
+      "date": "2014-04-19"
+    },
+    {
+      "customer": "eDiscovery",
+      "company": "Ensign Energy Services Inc.",
+      "contact": "Harold C. Loewen - HaroldCLoewen@rhyta.com",
+      "address": "1310 Kerry Way, Irvine, CA 92614",
+      "revenue": 746580.38,
+      "VAT": 9468,
+      "totalPrice": 590428.9,
+      "status": "FINISHED",
+      "date": "2014-04-20"
+    }
+  ]
+}

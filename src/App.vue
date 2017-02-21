@@ -1,29 +1,29 @@
 <template lang="pug">
-  #app
-    hello
+#app
+  dg-table
 </template>
 
 <script>
-import Hello from './components/Hello'
+import DgTable from 'components/DgTable'
 
 export default {
   name: 'app',
   components: {
-    Hello
+    DgTable
   }
 }
 </script>
 
 <style lang="sass">
-@import "sass/_variable.sass"
+@import "./sass/variables"
 
 body
   background: $bg-color
+  color: $text-color
+
 #app
-  font-family: 'Avenir', Helvetica, Arial, sans-serif
+  font-family: HelveticaNeue, Arial, sans-serif
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
-  text-align: center
-  color: #2c3e50
   margin-top: 60px
 </style>
