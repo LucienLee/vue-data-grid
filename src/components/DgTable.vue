@@ -1,17 +1,19 @@
 <template lang="pug">
+.dg-table
   table
     thead: tr
       th.header--date
-      th.header(v-for="header in headers",
-        :class="['header--'+header, headerClass(header)]",
-        @click="onExpand(header)") {{ header | capitalize }}
+      th.header(v-for="attribute in attributes",
+        :class="['header--'+attribute, headerClass(attribute)]",
+        @click="onExpand(attribute)", @contextmenu.prevent="onMenu") {{ attribute | capitalize }}
     tbody
       tr(v-for="(record, index) in sortedRecords")
         td.cell.cell--date(v-if="isfirstOfDateGroup(index)", :rowspan="getNumOfDateGroupByIndex(index)")
           span.cell-content {{record['date']}}
-        td.cell(v-for="header in headers", :class="'cell--' + header", @click="onExpand(header)")
-          span.cell-content(v-if="isCurrency(header)") {{record[header] | toCurrency}}
-          span.cell-content(v-else) {{record[header]}}
+        td.cell(v-for="attribute in attributes", :class="'cell--' + attribute", @click="onExpand(attribute)")
+          span.cell-content(v-if="isCurrency(attribute)") {{record[attribute] | toCurrency}}
+          span.cell-content(v-else) {{record[attribute]}}
+  dg-menu
 </template>
 
 <script>
@@ -28,7 +30,7 @@ Vue.filter('capitalize', capitalize)
 
 export default {
   data: () => ({
-    headers: ['customer', 'company', 'contact', 'address', 'revenue', 'VAT', 'totalPrice', 'status'],
+    attributes: ['customer', 'company', 'contact', 'address', 'revenue', 'VAT', 'totalPrice', 'status'],
     expandables: ['company', 'contact', 'address'],
     records: records,
     expanding: '',
@@ -52,7 +54,7 @@ export default {
           }
         })
         return acc
-      }, this.headers.reduce((acc, prop) => {
+      }, this.attributes.reduce((acc, prop) => {
         acc[prop] = 0
         return acc
       }, {}))
@@ -70,18 +72,18 @@ export default {
     getNumOfDateGroupByIndex (index) {
       return this.numOfDateGroup[toMMMMYYYY(this.sortedRecords[index].date)]
     },
-    headerClass (header) {
+    headerClass (attribute) {
       return {
-        'header--expandable': this.expanding !== header && this.expandables.includes(header)
+        'header--expandable': this.expanding !== attribute && this.expandables.includes(attribute)
       }
     },
-    onExpand (header) {
-      if (this.expandables.includes(header) && header !== this.expanding) {
-        this.expanding = header
+    onExpand (attribute) {
+      if (this.expandables.includes(attribute) && attribute !== this.expanding) {
+        this.expanding = attribute
         this.lastExpanded && this.lastExpanded.reverse()
 
-        const col = document.getElementsByClassName('header--' + header)[0]
-        const targetWidth = this.maxLenOfCols[header] / 2 + 1 // 1 for cell padding
+        const col = document.getElementsByClassName('header--' + attribute)[0]
+        const targetWidth = this.maxLenOfCols[attribute] / 2 + 1 // 1 for cell padding
 
         this.lastExpanded = TweenMax.to(col, 0.2, {
           width: `${targetWidth}em`,
