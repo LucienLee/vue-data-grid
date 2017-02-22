@@ -6,17 +6,17 @@
         th.header--date(key="header-date")
         th.header(v-for="attribute in filteredAttributes",
           :key="'header--'+attribute", :class="['header--'+attribute, headerClass(attribute)]",
-          @click="onExpand(attribute)", @contextmenu.prevent="openMenu") {{ attribute | capitalize }}
+          @click="onExpand(attribute, $event)", @contextmenu.prevent="openMenu") {{ attribute | capitalize }}
     tbody
       transition-group(v-for="(record, index) in sortedRecords", name="fade", tag="tr")
         td.cell.cell--date(v-if="isfirstOfDateGroup(index)", key="cell-date", :rowspan="getNumOfDateGroupByIndex(index)")
           span.cell-content {{ record['date'] | toMMMMYYYY }}
         td.cell(v-for="attribute in filteredAttributes", :key="'cell--' + attribute", :class="'cell--' + attribute"
-          @click="onExpand(attribute)")
+          @click="onExpand(attribute, $event)")
           span.cell-content(v-if="isCurrency(attribute)") {{ record[attribute] | toCurrency }}
           span.cell-content(v-else) {{ record[attribute] }}
   transition(name="fade")
-    dg-menu(v-if="showMenu", :options="attributes", :escaped="omitOnMenu",:position="menuPos")
+    dg-menu(v-if="showMenu", :options="attributes", :escaped="omitOnMenu", :position="menuPos")
 </template>
 
 <script>
@@ -107,8 +107,16 @@ export default {
         'header--expandable': this.expanding !== attribute && this.expandables.includes(attribute)
       }
     },
-    onExpand (attribute) {
-      if (this.expandables.includes(attribute) && attribute !== this.expanding && !this.showMenu) {
+    onExpand (attribute, event) {
+      if (this.showMenu) return
+
+      if (!this.expandables.includes(attribute) || attribute === this.expanding) {
+        // Collpased when click the same header or others not expanable
+        if (event.target.classList.contains('header')) {
+          this.expanding = ''
+          this.lastExpanded && this.lastExpanded.reverse()
+        }
+      } else {
         this.expanding = attribute
         this.lastExpanded && this.lastExpanded.reverse()
 
