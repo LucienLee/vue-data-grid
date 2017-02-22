@@ -1,19 +1,22 @@
 <template lang="pug">
 .dg-table
   table(@click="reset")
-    thead: tr
-      th.header--date
-      th.header(v-for="attribute in filteredAttributes",
-        :class="['header--'+attribute, headerClass(attribute)]",
-        @click="onExpand(attribute)", @contextmenu.prevent="onMenu") {{ attribute | capitalize }}
+    thead
+      transition-group(name="fade", tag="tr")
+        th.header--date(key="header-date")
+        th.header(v-for="attribute in filteredAttributes", :key="'header--'+attribute",
+          :class="['header--'+attribute, headerClass(attribute)]",
+          @click="onExpand(attribute)", @contextmenu.prevent="onMenu") {{ attribute | capitalize }}
     tbody
-      tr(v-for="(record, index) in sortedRecords")
-        td.cell.cell--date(v-if="isfirstOfDateGroup(index)", :rowspan="getNumOfDateGroupByIndex(index)")
+      transition-group(v-for="(record, index) in sortedRecords", name="fade", tag="tr")
+        td.cell.cell--date(v-if="isfirstOfDateGroup(index)", :rowspan="getNumOfDateGroupByIndex(index)", key="cell-date")
           span.cell-content {{record['date'] | toMMMMYYYY}}
-        td.cell(v-for="attribute in filteredAttributes", :class="'cell--' + attribute", @click="onExpand(attribute)")
+        td.cell(v-for="attribute in filteredAttributes", :class="'cell--' + attribute", :key="'cell--' + attribute"
+          @click="onExpand(attribute)")
           span.cell-content(v-if="isCurrency(attribute)") {{record[attribute] | toCurrency}}
           span.cell-content(v-else) {{record[attribute]}}
-  dg-menu(v-if="showMenu", :options="attributes", :position="menuPos")
+  transition(name="fade")
+    dg-menu(v-if="showMenu", :options="attributes", :position="menuPos")
 </template>
 
 <script>
@@ -134,6 +137,7 @@ export default {
 <style lang="sass" scoped>
 @import "../sass/variables"
 @import "../sass/utils"
+@import "../sass/transition"
 
 $fixed-cell-width: 10em
 $arrow-size: 8px
