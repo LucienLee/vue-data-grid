@@ -29,7 +29,7 @@ $shrink-factor: 0.6
 
 .roundCheckBox
   cursor: pointer
-  margin: 2em 0
+  padding: 0.25em 0
 
   &:hover .label
     color: #fff

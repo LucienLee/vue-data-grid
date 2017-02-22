@@ -1,7 +1,8 @@
 <template lang="pug">
 .dg-menu(:style="posStyle")
   .panel
-    round-check-box(v-for="(value, key) in options", v-if="!shouldBeEscaped(key)", :label="key | capitalize", v-model="options[key]", :isBlock="true")
+    .option(v-for="(value, key) in options", v-if="!shouldBeEscaped(key)")
+      round-check-box(:label="key | capitalize", v-model="options[key]", :isBlock="true")
 </template>
 
 <script>
@@ -39,7 +40,10 @@ export default {
 
 .panel
   background: $menu-color
-  padding: 0.1em 2em
+  padding: 0.5em 2em
   box-shadow: 4px 4px 2px 0 rgba(#000, 0.24)
+
+.option
+  margin: 1em 0
 
 </style>
