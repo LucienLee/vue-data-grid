@@ -15,6 +15,7 @@ export default {
 </script>
 
 <style lang="sass">
+@import url('https://fonts.googleapis.com/css?family=Lato:700,900')
 @import "./sass/variables"
 
 body
@@ -23,7 +24,8 @@ body
   color: $text-color
 
 #app
-  font-family: HelveticaNeue, Arial, sans-serif
+  font-family: Lato, Arial, sans-serif
+  font-weight: 700
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
   margin-top: 60px
