@@ -1,14 +1,15 @@
 <template lang="pug">
-.dg-table
   table
     thead: tr
-      th
-      th.header.header--expandable(v-for="header in headers", :class="'header--' + header") {{ header | capitalize }}
+      th.header--date
+      th.header(v-for="header in headers",
+        :class="['header--'+header, headerClass(header)]",
+        @click="onExpand(header)") {{ header | capitalize }}
     tbody
       tr(v-for="(record, index) in sortedRecords")
-        td.cell.cell--group(v-if="isfirstOfDateGroup(index)", :rowspan="getNumOfDateGroupByIndex(index)")
+        td.cell.cell--date(v-if="isfirstOfDateGroup(index)", :rowspan="getNumOfDateGroupByIndex(index)")
           span.cell-content {{record['date']}}
-        td.cell(v-for="header in headers", :class="'cell--' + header" )
+        td.cell(v-for="header in headers", :class="'cell--' + header", @click="onExpand(header)")
           span.cell-content(v-if="isCurrency(header)") {{record[header] | toCurrency}}
           span.cell-content(v-else) {{record[header]}}
 </template>
@@ -17,6 +18,7 @@
 import Vue from 'vue'
 import moment from 'moment'
 import _ from 'lodash'
+import { TweenMax, Linear } from 'gsap'
 import { records } from '../data.json'
 import { toCurrency, toMMMMYYYY, capitalize } from 'utils/filters'
 
@@ -27,7 +29,10 @@ Vue.filter('capitalize', capitalize)
 export default {
   data: () => ({
     headers: ['customer', 'company', 'contact', 'address', 'revenue', 'VAT', 'totalPrice', 'status'],
-    records: records
+    expandables: ['company', 'contact', 'address'],
+    records: records,
+    expanding: '',
+    lastExpanded: ''
   }),
   computed: {
     sortedRecords () {
@@ -38,6 +43,19 @@ export default {
     numOfDateGroup () {
       const dates = this.sortedRecords.map(el => el.date)
       return _.countBy(dates, toMMMMYYYY)
+    },
+    maxLenOfCols () {
+      return this.records.reduce((acc, record) => {
+        Object.keys(record).forEach((prop) => {
+          if (acc[prop] < record[prop].length) {
+            acc[prop] = record[prop].length
+          }
+        })
+        return acc
+      }, this.headers.reduce((acc, prop) => {
+        acc[prop] = 0
+        return acc
+      }, {}))
     }
   },
   methods: {
@@ -51,6 +69,25 @@ export default {
     },
     getNumOfDateGroupByIndex (index) {
       return this.numOfDateGroup[toMMMMYYYY(this.sortedRecords[index].date)]
+    },
+    headerClass (header) {
+      return {
+        'header--expandable': this.expanding !== header && this.expandables.includes(header)
+      }
+    },
+    onExpand (header) {
+      if (this.expandables.includes(header) && header !== this.expanding) {
+        this.expanding = header
+        this.lastExpanded && this.lastExpanded.reverse()
+
+        const col = document.getElementsByClassName('header--' + header)[0]
+        const targetWidth = this.maxLenOfCols[header] / 2 + 1 // 1 for cell padding
+
+        this.lastExpanded = TweenMax.to(col, 0.2, {
+          width: `${targetWidth}em`,
+          ease: Linear.easeNone
+        })
+      }
     }
   }
 }
@@ -61,43 +98,30 @@ export default {
 @import "../sass/variables"
 @import "../sass/utils"
 
+$fixed-cell-width: 10em
+$arrow-size: 8px
+
 table
   table-layout: fixed
-  width: 75%
+  width: 80%
   margin: 0 auto
   border-collapse: collapse
   text-align: left
 
 .header
-  border: 1px solid $border-color
+  width: fitted-cell-width(8)
   padding: $cell-padding
+  border: 1px solid $border-color
   background: $hover-color
+
+.header--date
+  border: none
+  width: $fixed-cell-width
 
 .header--customer
   background: none
+  width: $fixed-cell-width
 
-.header--company
-  width: fitted-cell-width(7)
-
-.header--contact
-  width: fitted-cell-width(7)
-
-.header--address
-  width: 16em
-
-.header--revenue
-  width: 5em
-
-.header--VAT
-  width: 5em
-
-.header--totalPrice
-  width: fitted-cell-width(10)
-
-.header--status
-  width: fitted-cell-width(7)
-
-$arrow-size: 8px
 .header--expandable
   position: relative
   &::after
@@ -124,9 +148,9 @@ $arrow-size: 8px
   border-right: $cell-padding solid transparent
   padding: $cell-padding 0
   overflow: hidden
+  cursor: pointer
 
-.cell--group
-  width: 20px
+.cell--date
   font-weight: bold
   background: $hover-color
 

@@ -18,6 +18,7 @@ export default {
 @import "./sass/variables"
 
 body
+  font-size: 12px
   background: $bg-color
   color: $text-color
 
