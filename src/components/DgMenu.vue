@@ -1,7 +1,7 @@
 <template lang="pug">
 .dg-menu(:style="posStyle")
   .panel
-    round-check-box(v-for="(value, key) in options", :label="key | capitalize", v-model="options[key]", :isBlock="true")
+    round-check-box(v-for="(value, key) in options", v-if="!shouldBeEscaped(key)", :label="key | capitalize", v-model="options[key]", :isBlock="true")
 </template>
 
 <script>
@@ -21,9 +21,11 @@ export default {
         left: `${this.position.x}px`,
         top: `${this.position.y}px`
       }
-    },
-    escapedOptions () {
-
+    }
+  },
+  methods: {
+    shouldBeEscaped (option) {
+      return this.escaped ? this.escaped.includes(option) : false
     }
   }
 }

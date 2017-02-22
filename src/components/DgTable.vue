@@ -1,22 +1,22 @@
 <template lang="pug">
 .dg-table
-  table(@click="reset")
+  table(@click="closeMenu")
     thead
       transition-group(name="fade", tag="tr")
         th.header--date(key="header-date")
-        th.header(v-for="attribute in filteredAttributes", :key="'header--'+attribute",
-          :class="['header--'+attribute, headerClass(attribute)]",
-          @click="onExpand(attribute)", @contextmenu.prevent="onMenu") {{ attribute | capitalize }}
+        th.header(v-for="attribute in filteredAttributes",
+          :key="'header--'+attribute", :class="['header--'+attribute, headerClass(attribute)]",
+          @click="onExpand(attribute)", @contextmenu.prevent="openMenu") {{ attribute | capitalize }}
     tbody
       transition-group(v-for="(record, index) in sortedRecords", name="fade", tag="tr")
-        td.cell.cell--date(v-if="isfirstOfDateGroup(index)", :rowspan="getNumOfDateGroupByIndex(index)", key="cell-date")
-          span.cell-content {{record['date'] | toMMMMYYYY}}
-        td.cell(v-for="attribute in filteredAttributes", :class="'cell--' + attribute", :key="'cell--' + attribute"
+        td.cell.cell--date(v-if="isfirstOfDateGroup(index)", key="cell-date", :rowspan="getNumOfDateGroupByIndex(index)")
+          span.cell-content {{ record['date'] | toMMMMYYYY }}
+        td.cell(v-for="attribute in filteredAttributes", :key="'cell--' + attribute", :class="'cell--' + attribute"
           @click="onExpand(attribute)")
-          span.cell-content(v-if="isCurrency(attribute)") {{record[attribute] | toCurrency}}
-          span.cell-content(v-else) {{record[attribute]}}
+          span.cell-content(v-if="isCurrency(attribute)") {{ record[attribute] | toCurrency }}
+          span.cell-content(v-else) {{ record[attribute] }}
   transition(name="fade")
-    dg-menu(v-if="showMenu", :options="attributes", :position="menuPos")
+    dg-menu(v-if="showMenu", :options="attributes", :escaped="omitOnMenu",:position="menuPos")
 </template>
 
 <script>
@@ -50,6 +50,7 @@ export default {
         status: true
       },
       expandables: ['company', 'contact', 'address'],
+      omitOnMenu: ['customer'],
       records: records,
       expanding: '',
       lastExpanded: '',
@@ -107,7 +108,7 @@ export default {
       }
     },
     onExpand (attribute) {
-      if (this.expandables.includes(attribute) && attribute !== this.expanding) {
+      if (this.expandables.includes(attribute) && attribute !== this.expanding && !this.showMenu) {
         this.expanding = attribute
         this.lastExpanded && this.lastExpanded.reverse()
 
@@ -120,13 +121,13 @@ export default {
         })
       }
     },
-    onMenu (event) {
+    openMenu (event) {
       const {x, y} = offsets(event)
       this.menuPos.x = x + event.target.offsetLeft
       this.menuPos.y = y + event.target.offsetTop
       this.showMenu = true
     },
-    reset () {
+    closeMenu () {
       this.showMenu = false
     }
   }
@@ -167,7 +168,10 @@ table
   background: none
   width: $fixed-cell-width
 
-.header--expandable::after
+.header--expandable
+  cursor: pointer
+
+  &::after
     content: ''
     position: absolute
     right: 0
