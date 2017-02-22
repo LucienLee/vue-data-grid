@@ -1,19 +1,19 @@
 <template lang="pug">
 .dg-table
-  table
+  table(@click="reset")
     thead: tr
       th.header--date
-      th.header(v-for="attribute in attributes",
+      th.header(v-for="attribute in filteredAttributes",
         :class="['header--'+attribute, headerClass(attribute)]",
         @click="onExpand(attribute)", @contextmenu.prevent="onMenu") {{ attribute | capitalize }}
     tbody
       tr(v-for="(record, index) in sortedRecords")
         td.cell.cell--date(v-if="isfirstOfDateGroup(index)", :rowspan="getNumOfDateGroupByIndex(index)")
-          span.cell-content {{record['date']}}
-        td.cell(v-for="attribute in attributes", :class="'cell--' + attribute", @click="onExpand(attribute)")
+          span.cell-content {{record['date'] | toMMMMYYYY}}
+        td.cell(v-for="attribute in filteredAttributes", :class="'cell--' + attribute", @click="onExpand(attribute)")
           span.cell-content(v-if="isCurrency(attribute)") {{record[attribute] | toCurrency}}
           span.cell-content(v-else) {{record[attribute]}}
-  dg-menu
+  dg-menu(v-if="showMenu", :options="attributes", :position="menuPos")
 </template>
 
 <script>
@@ -23,23 +23,49 @@ import _ from 'lodash'
 import { TweenMax, Linear } from 'gsap'
 import { records } from '../data.json'
 import { toCurrency, toMMMMYYYY, capitalize } from 'utils/filters'
+import { offsets } from 'utils/mouse'
+import DgMenu from 'components/DgMenu'
 
 Vue.filter('toCurrency', toCurrency)
 Vue.filter('toMMMMYYYY', toMMMMYYYY)
 Vue.filter('capitalize', capitalize)
 
 export default {
-  data: () => ({
-    attributes: ['customer', 'company', 'contact', 'address', 'revenue', 'VAT', 'totalPrice', 'status'],
-    expandables: ['company', 'contact', 'address'],
-    records: records,
-    expanding: '',
-    lastExpanded: ''
-  }),
+  components: {
+    DgMenu
+  },
+  data () {
+    return {
+      attributes: {
+        customer: true,
+        company: true,
+        contact: true,
+        address: true,
+        revenue: true,
+        VAT: true,
+        totalPrice: true,
+        status: true
+      },
+      expandables: ['company', 'contact', 'address'],
+      records: records,
+      expanding: '',
+      lastExpanded: '',
+      showMenu: false,
+      menuPos: {
+        x: 0,
+        y: 0
+      }
+    }
+  },
   computed: {
     sortedRecords () {
       return this.records.sort((a, b) => {
         return moment(a.date).isBefore(b.date) ? -1 : 1
+      })
+    },
+    filteredAttributes () {
+      return Object.keys(this.attributes).filter((el) => {
+        return this.attributes[el]
       })
     },
     numOfDateGroup () {
@@ -54,7 +80,7 @@ export default {
           }
         })
         return acc
-      }, this.attributes.reduce((acc, prop) => {
+      }, Object.keys(this.attributes).reduce((acc, prop) => {
         acc[prop] = 0
         return acc
       }, {}))
@@ -90,6 +116,15 @@ export default {
           ease: Linear.easeNone
         })
       }
+    },
+    onMenu (event) {
+      const {x, y} = offsets(event)
+      this.menuPos.x = x + event.target.offsetLeft
+      this.menuPos.y = y + event.target.offsetTop
+      this.showMenu = true
+    },
+    reset () {
+      this.showMenu = false
     }
   }
 }
@@ -103,6 +138,9 @@ export default {
 $fixed-cell-width: 10em
 $arrow-size: 8px
 
+.dg-table
+  position: relative
+
 table
   table-layout: fixed
   width: 80%
@@ -111,6 +149,7 @@ table
   text-align: left
 
 .header
+  position: relative
   width: fitted-cell-width(8)
   padding: $cell-padding
   border: 1px solid $border-color
@@ -124,9 +163,7 @@ table
   background: none
   width: $fixed-cell-width
 
-.header--expandable
-  position: relative
-  &::after
+.header--expandable::after
     content: ''
     position: absolute
     right: 0
@@ -153,7 +190,7 @@ table
   cursor: pointer
 
 .cell--date
-  font-weight: bold
+  font-weight: 900
   background: $hover-color
 
 .cell--customer
