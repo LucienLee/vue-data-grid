@@ -5,15 +5,17 @@
       transition-group(name="fade", tag="tr")
         th.header--date(key="header-date")
         th.header(v-for="attribute in filteredAttributes",
-          :key="'header--'+attribute", :class="['header--'+attribute, headerClass(attribute)]",
+          :key="'header--'+attribute", :class="headerClass(attribute)",
           @click="onExpand(attribute, $event)", @contextmenu.prevent="openMenu") {{ attribute | capitalize }}
     tbody
       transition-group(v-for="(record, index) in sortedRecords", name="fade", tag="tr")
         td.cell.cell--date(v-if="isfirstOfDateGroup(index)", key="cell-date", :rowspan="getNumOfDateGroupByIndex(index)")
           span.cell-content {{ record['date'] | toMMMMYYYY }}
-        td.cell(v-for="attribute in filteredAttributes", :key="'cell--' + attribute", :class="'cell--' + attribute"
-          @click="onExpand(attribute, $event)")
+        td.cell(v-for="attribute in filteredAttributes",
+          :key="'cell--' + attribute", :class="cellClass(attribute, record['uid'])"
+          @click="onCellClick(attribute, record['uid'], $event)")
           span.cell-content(v-if="isCurrency(attribute)") {{ record[attribute] | toCurrency }}
+            dg-cell-menu(v-if="focusCell.recordId === record['uid'] && focusCell.attribute === attribute")
           span.cell-content(v-else) {{ record[attribute] }}
   transition(name="fade")
     dg-menu(v-if="showMenu", :options="attributes", :escaped="omitOnMenu", :position="menuPos")
@@ -28,6 +30,7 @@ import { records } from '../data.json'
 import { toCurrency, toMMMMYYYY, capitalize } from 'utils/filters'
 import { offsets } from 'utils/mouse'
 import DgMenu from 'components/DgMenu'
+import DgCellMenu from 'components/DgCellMenu'
 
 Vue.filter('toCurrency', toCurrency)
 Vue.filter('toMMMMYYYY', toMMMMYYYY)
@@ -35,7 +38,8 @@ Vue.filter('capitalize', capitalize)
 
 export default {
   components: {
-    DgMenu
+    DgMenu,
+    DgCellMenu
   },
   data () {
     return {
@@ -53,6 +57,10 @@ export default {
       omitOnMenu: ['customer'],
       records: records,
       expanding: '',
+      focusCell: {
+        recordId: '',
+        attribute: ''
+      },
       lastExpanded: '',
       showMenu: false,
       menuPos: {
@@ -103,9 +111,12 @@ export default {
       return this.numOfDateGroup[toMMMMYYYY(this.sortedRecords[index].date)]
     },
     headerClass (attribute) {
-      return {
-        'header--expandable': this.expanding !== attribute && this.expandables.includes(attribute)
-      }
+      return [`header--${attribute}`,
+        {'header--expandable': this.expanding !== attribute && this.expandables.includes(attribute)}]
+    },
+    cellClass (attribute, recordId) {
+      return [`cell--${attribute}`,
+      {'cell--focus': this.focusCell.recordId === recordId && this.focusCell.attribute === attribute}]
     },
     onExpand (attribute, event) {
       if (this.showMenu) return
@@ -128,6 +139,13 @@ export default {
           ease: Linear.easeNone
         })
       }
+    },
+    onCellClick (attribute, id, event) {
+      this.focusCell.recordId = id
+      this.focusCell.attribute = attribute
+      // if (attribute === 'VAT') {
+
+      // }
     },
     openMenu (event) {
       const {x, y} = offsets(event)
@@ -189,11 +207,19 @@ table
     border-color: transparent transparent $primary-color transparent
 
 .cell
+  position: relative
+  box-sizing: border-box
   border: 1px solid $border-color
   white-space: nowrap
+  padding: 0
 
   &:hover
     background: $hover-color
+
+.cell--focus, .cell--focus:hover
+  background: $cell-color
+  box-shadow: $shadow
+
 
 .cell-content
   display: inline-block
@@ -204,6 +230,10 @@ table
   padding: $cell-padding 0
   overflow: hidden
   cursor: pointer
+
+  // position: relative
+  // background: $cell-color
+  // box-shadow: $shadow
 
 .cell--date
   font-weight: 900

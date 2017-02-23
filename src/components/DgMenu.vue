@@ -41,7 +41,7 @@ export default {
 .panel
   background: $menu-color
   padding: 0.5em 2em
-  box-shadow: 4px 4px 2px 0 rgba(#000, 0.24)
+  box-shadow: $shadow
 
 .option
   margin: 1em 0
