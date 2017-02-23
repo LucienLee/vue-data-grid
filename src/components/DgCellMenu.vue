@@ -1,20 +1,33 @@
 <template lang="pug">
 .dg-cell-menu
   ul.panel
-    li.item: a.button(href="#") Compare with
-    li.item: a.button(href="#") Edit
-    li.item: a.button(href="#") View Revisions
+    li.item: a.button(href="#")
+      span.icon.icon--compare: icon(symbol="compare")
+      span.label Compare with
+    li.item: a.button(href="#")
+      span.icon: icon(symbol="edit")
+      span.label Edit
+    li.item: a.button(href="#")
+      span.icon: icon(symbol="revision")
+      span.label View Revisions
 </template>
 
 <script>
-export default {
+import Icon from 'components/Icon'
 
+export default {
+  components: {
+    Icon
+  }
 }
 
 </script>
 
 <style lang="sass" scoped>
 @import '../sass/variables'
+
+$icon-size: 1.6em
+$icon-rect-size: 2em
 
 .dg-cell-menu
   position: absolute
@@ -36,9 +49,24 @@ export default {
   user-select: none
   cursor: pointer
 
+.icon
+  display: inline-block
+  vertical-align: middle
+  width: $icon-size
+  height: $icon-size
+
+.icon--compare
+  width: $icon-rect-size
+  height: $icon-rect-size
+  margin: ($icon-size - $icon-rect-size) / 2
+
+.label
+  display: inline-block
+  vertical-align: middle
+
 .button
   color: $secondary-color
   font-weight: 900
-  &:hover
+  &:hover .label
     color: #fff
 </style>
