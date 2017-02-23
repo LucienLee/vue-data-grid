@@ -31,6 +31,7 @@ import moment from 'moment'
 import _ from 'lodash'
 import { TweenMax, Linear } from 'gsap'
 import { records } from '../data.json'
+import settings from '../tableSettings'
 import { toCurrency, toMMMMYYYY, capitalize, toGMapQuery } from 'utils/filters'
 import { offsets } from 'utils/mouse'
 import DgMenu from 'components/DgMenu'
@@ -42,6 +43,14 @@ Vue.filter('toCurrency', toCurrency)
 Vue.filter('toMMMMYYYY', toMMMMYYYY)
 Vue.filter('capitalize', capitalize)
 
+let conditionsStore = settings.filterables.reduce((acc, cur) => {
+  acc[cur] = {
+    sort: '',
+    range: []
+  }
+  return acc
+}, {})
+
 export default {
   components: {
     DgMenu,
@@ -51,21 +60,13 @@ export default {
   },
   data () {
     return {
-      attributes: {
-        customer: true,
-        company: true,
-        contact: true,
-        address: true,
-        revenue: true,
-        VAT: true,
-        totalPrice: true,
-        status: true
-      },
-      expandables: ['company', 'contact', 'address'],
-      interactables: ['revenue', 'VAT', 'totalPrice'],
-      currencies: ['revenue', 'VAT', 'totalPrice'],
-      hasDetails: ['address'],
-      filterables: ['VAT'],
+      attributes: settings.attributes,
+      expandables: settings.expandables,
+      interactables: settings.interactables,
+      currencies: settings.currencies,
+      hasDetails: settings.hasDetails,
+      filterables: settings.filterables,
+      conditionsOfFilterables: conditionsStore,
       omitOnMenu: ['customer'],
       records: records,
       expanding: '',
