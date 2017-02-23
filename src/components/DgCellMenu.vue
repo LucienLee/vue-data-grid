@@ -21,7 +21,6 @@ export default {
   z-index: 100
   top: 100%
   left: 0
-  min-width: 100%
 
 .panel
   display: inline-block

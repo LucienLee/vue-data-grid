@@ -6,17 +6,17 @@
         th.header--date(key="header-date")
         th.header(v-for="attribute in filteredAttributes",
           :key="'header--'+attribute", :class="headerClass(attribute)",
-          @click="onExpand(attribute, $event)", @contextmenu.prevent="openMenu") {{ attribute | capitalize }}
+          @click="onHeaderClick(attribute, $event)", @contextmenu.prevent="openMenu") {{ attribute | capitalize }}
     tbody
       transition-group(v-for="(record, index) in sortedRecords", name="fade", tag="tr")
         td.cell.cell--date(v-if="isfirstOfDateGroup(index)", key="cell-date", :rowspan="getNumOfDateGroupByIndex(index)")
           span.cell-content {{ record['date'] | toMMMMYYYY }}
         td.cell(v-for="attribute in filteredAttributes",
-          :key="'cell--' + attribute", :class="cellClass(attribute, record['uid'])"
-          @click="onCellClick(attribute, record['uid'], $event)")
-          span.cell-content(v-if="isCurrency(attribute)") {{ record[attribute] | toCurrency }}
-            dg-cell-menu(v-if="focusCell.recordId === record['uid'] && focusCell.attribute === attribute")
-          span.cell-content(v-else) {{ record[attribute] }}
+          :key="'cell--' + attribute", :class="cellClass(attribute, record['uid'])")
+          transition(name="fade")
+            dg-cell-menu(v-if="interactables.includes(attribute) && focusCell.recordId === record['uid'] && focusCell.attribute === attribute")
+          span.cell-content(v-if="isCurrency(attribute)", @click="onCellClick(attribute, record['uid'], $event)") {{ record[attribute] | toCurrency }}
+          span.cell-content(v-else, @click="onCellClick(attribute, record['uid'], $event)") {{ record[attribute] }}
   transition(name="fade")
     dg-menu(v-if="showMenu", :options="attributes", :escaped="omitOnMenu", :position="menuPos")
 </template>
@@ -54,6 +54,9 @@ export default {
         status: true
       },
       expandables: ['company', 'contact', 'address'],
+      interactables: ['revenue', 'VAT', 'totalPrice'],
+      currencies: ['revenue', 'VAT', 'totalPrice'],
+      hasDetals: ['address'],
       omitOnMenu: ['customer'],
       records: records,
       expanding: '',
@@ -100,7 +103,7 @@ export default {
   },
   methods: {
     isCurrency (str) {
-      return ['revenue', 'VAT', 'totalPrice'].includes(str)
+      return this.currencies.includes(str)
     },
     isfirstOfDateGroup (index) {
       return index === 0
@@ -116,9 +119,9 @@ export default {
     },
     cellClass (attribute, recordId) {
       return [`cell--${attribute}`,
-      {'cell--focus': this.focusCell.recordId === recordId && this.focusCell.attribute === attribute}]
+      {'cell--focus': this.interactables.includes(attribute) && this.focusCell.recordId === recordId && this.focusCell.attribute === attribute}]
     },
-    onExpand (attribute, event) {
+    expandCol (attribute, event) {
       if (this.showMenu) return
 
       if (!this.expandables.includes(attribute) || attribute === this.expanding) {
@@ -140,21 +143,32 @@ export default {
         })
       }
     },
+    onHeaderClick (attribute, event) {
+      this.clearFocusCell()
+      this.expandCol(attribute, event)
+    },
     onCellClick (attribute, id, event) {
-      this.focusCell.recordId = id
-      this.focusCell.attribute = attribute
-      // if (attribute === 'VAT') {
-
-      // }
+      if (this.focusCell.recordId === id && this.focusCell.attribute === attribute) {
+        this.clearFocusCell()
+      } else {
+        this.focusCell.recordId = id
+        this.focusCell.attribute = attribute
+        this.expandCol(attribute, event)
+      }
     },
     openMenu (event) {
       const {x, y} = offsets(event)
       this.menuPos.x = x + event.target.offsetLeft
       this.menuPos.y = y + event.target.offsetTop
+      this.clearFocusCell()
       this.showMenu = true
     },
     closeMenu () {
       this.showMenu = false
+    },
+    clearFocusCell () {
+      this.focusCell.recordId = ''
+      this.focusCell.attribute = ''
     }
   }
 }
@@ -212,13 +226,14 @@ table
   border: 1px solid $border-color
   white-space: nowrap
   padding: 0
+  transition: background $medium
 
   &:hover
     background: $hover-color
 
 .cell--focus, .cell--focus:hover
   background: $cell-color
-  box-shadow: $shadow
+  box-shadow: 4px 0 2px 0 rgba(#000, 0.24)
 
 
 .cell-content
