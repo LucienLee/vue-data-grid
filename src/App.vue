@@ -1,14 +1,17 @@
 <template lang="pug">
 #app
-  dg-table
+  nav-bar
+  dg-table.table
 </template>
 
 <script>
 import DgTable from 'components/DgTable'
+import NavBar from 'components/NavBar'
 
 export default {
   name: 'app',
   components: {
+    NavBar,
     DgTable
   }
 }
@@ -22,12 +25,15 @@ body
   font-size: 12px
   background: $bg-color
   color: $text-color
+  margin: 0
 
 #app
   font-family: Lato, Arial, sans-serif
   font-weight: 700
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
+
+.table
   margin-top: 60px
 
 a
