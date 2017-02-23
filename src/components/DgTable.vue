@@ -7,6 +7,7 @@
         th.header(v-for="attribute in filteredAttributes",
           :key="'header--'+attribute", :class="headerClass(attribute)",
           @click="onHeaderClick(attribute, $event)", @contextmenu.prevent="openMenu") {{ attribute | capitalize }}
+          dg-filter(v-if="filterables.includes(attribute)")
     tbody
       transition-group(v-for="(record, index) in sortedRecords", name="fade", tag="tr")
         td.cell.cell--date(v-if="isfirstOfDateGroup(index)", key="cell-date", :rowspan="getNumOfDateGroupByIndex(index)")
@@ -35,6 +36,7 @@ import { offsets } from 'utils/mouse'
 import DgMenu from 'components/DgMenu'
 import DgCellMenu from 'components/DgCellMenu'
 import DgCellDetail from 'components/DgCellDetail'
+import DgFilter from 'components/DgFilter'
 
 Vue.filter('toCurrency', toCurrency)
 Vue.filter('toMMMMYYYY', toMMMMYYYY)
@@ -44,7 +46,8 @@ export default {
   components: {
     DgMenu,
     DgCellMenu,
-    DgCellDetail
+    DgCellDetail,
+    DgFilter
   },
   data () {
     return {
@@ -62,6 +65,7 @@ export default {
       interactables: ['revenue', 'VAT', 'totalPrice'],
       currencies: ['revenue', 'VAT', 'totalPrice'],
       hasDetails: ['address'],
+      filterables: ['VAT'],
       omitOnMenu: ['customer'],
       records: records,
       expanding: '',
@@ -247,7 +251,7 @@ table
 
 .cell--focus, .cell--focus:hover
   background: $cell-color
-  box-shadow: 4px 0 2px 0 rgba(#000, 0.24)
+  box-shadow: $half-shadow
 
 
 .cell-content
@@ -266,6 +270,5 @@ table
 
 .cell--customer
   background: $hover-color
-
 
 </style>
