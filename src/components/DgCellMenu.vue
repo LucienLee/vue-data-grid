@@ -27,7 +27,7 @@ export default {
 @import '../sass/variables'
 
 $icon-size: 1.6em
-$icon-rect-size: 2em
+$icon-rect-size: 1.8em
 
 .dg-cell-menu
   position: absolute
