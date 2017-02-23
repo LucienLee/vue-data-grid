@@ -15,7 +15,7 @@
           :key="'cell--' + attribute", :class="cellClass(attribute, record['uid'])")
           transition(name="fade")
             dg-cell-menu(v-if="interactables.includes(attribute) && focusCell.recordId === record['uid'] && focusCell.attribute === attribute")
-            dg-cell-detail(v-if="hasDetals.includes(attribute) && focusCell.recordId === record['uid'] && focusCell.attribute === attribute", @click="clearFocusCell")
+            dg-cell-detail(v-if="hasDetails.includes(attribute) && focusCell.recordId === record['uid'] && focusCell.attribute === attribute", @click="clearFocusCell")
               p {{ record[attribute] }}
               a(:href="getAddressLink(record[attribute])", target="_blank") View in Google Maps
           span.cell-content(v-if="isCurrency(attribute)", @click="onCellClick(attribute, record['uid'], $event)") {{ record[attribute] | toCurrency }}
@@ -61,7 +61,7 @@ export default {
       expandables: ['company', 'contact', 'address'],
       interactables: ['revenue', 'VAT', 'totalPrice'],
       currencies: ['revenue', 'VAT', 'totalPrice'],
-      hasDetals: ['address'],
+      hasDetails: ['address'],
       omitOnMenu: ['customer'],
       records: records,
       expanding: '',
@@ -127,19 +127,23 @@ export default {
     },
     cellClass (attribute, recordId) {
       return [`cell--${attribute}`,
-        {'cell--focus': (this.interactables.includes(attribute) || this.hasDetals.includes(attribute)) &&
+        {'cell--focus': (this.interactables.includes(attribute) || this.hasDetails.includes(attribute)) &&
           this.focusCell.recordId === recordId && this.focusCell.attribute === attribute}]
     },
     expandCol (attribute, event) {
       if (this.showMenu) return
+      const isClickedHeader = event.target.classList.contains('header')
+      const isClickedSame = this.expanding === attribute
+      const isExpandables = this.expandables.includes(attribute)
 
-      if (!this.expandables.includes(attribute) || attribute === this.expanding) {
-        // Collpased when click the same header or others not expanable
-        if (event.target.classList.contains('header')) {
-          this.expanding = ''
-          this.lastExpanded && this.lastExpanded.reverse()
-        }
-      } else {
+      // Collapsing when click the same one's header or not expandable one
+      if (isClickedSame && isClickedHeader || !isExpandables) {
+        this.expanding = ''
+        this.lastExpanded && this.lastExpanded.reverse()
+      }
+
+      // Expanding when click not the same expandable one
+      if (isExpandables && !isClickedSame) {
         this.expanding = attribute
         this.lastExpanded && this.lastExpanded.reverse()
 
