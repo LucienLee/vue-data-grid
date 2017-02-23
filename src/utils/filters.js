@@ -14,4 +14,8 @@ function toMMMMYYYY (text) {
   return moment(text).format('MMMM  YYYY')
 }
 
-export {toCurrency, toMMMMYYYY, capitalize}
+function toGMapQuery (address) {
+  return `https://www.google.com/maps?q=${address.replace(/\s/g, '+')}`
+}
+
+export {toCurrency, toMMMMYYYY, capitalize, toGMapQuery}

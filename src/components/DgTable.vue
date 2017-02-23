@@ -15,6 +15,9 @@
           :key="'cell--' + attribute", :class="cellClass(attribute, record['uid'])")
           transition(name="fade")
             dg-cell-menu(v-if="interactables.includes(attribute) && focusCell.recordId === record['uid'] && focusCell.attribute === attribute")
+            dg-cell-detail(v-if="hasDetals.includes(attribute) && focusCell.recordId === record['uid'] && focusCell.attribute === attribute", @click="clearFocusCell")
+              p {{ record[attribute] }}
+              a(:href="getAddressLink(record[attribute])", target="_blank") View in Google Maps
           span.cell-content(v-if="isCurrency(attribute)", @click="onCellClick(attribute, record['uid'], $event)") {{ record[attribute] | toCurrency }}
           span.cell-content(v-else, @click="onCellClick(attribute, record['uid'], $event)") {{ record[attribute] }}
   transition(name="fade")
@@ -27,10 +30,11 @@ import moment from 'moment'
 import _ from 'lodash'
 import { TweenMax, Linear } from 'gsap'
 import { records } from '../data.json'
-import { toCurrency, toMMMMYYYY, capitalize } from 'utils/filters'
+import { toCurrency, toMMMMYYYY, capitalize, toGMapQuery } from 'utils/filters'
 import { offsets } from 'utils/mouse'
 import DgMenu from 'components/DgMenu'
 import DgCellMenu from 'components/DgCellMenu'
+import DgCellDetail from 'components/DgCellDetail'
 
 Vue.filter('toCurrency', toCurrency)
 Vue.filter('toMMMMYYYY', toMMMMYYYY)
@@ -39,7 +43,8 @@ Vue.filter('capitalize', capitalize)
 export default {
   components: {
     DgMenu,
-    DgCellMenu
+    DgCellMenu,
+    DgCellDetail
   },
   data () {
     return {
@@ -113,13 +118,17 @@ export default {
     getNumOfDateGroupByIndex (index) {
       return this.numOfDateGroup[toMMMMYYYY(this.sortedRecords[index].date)]
     },
+    getAddressLink (text) {
+      return toGMapQuery(text)
+    },
     headerClass (attribute) {
       return [`header--${attribute}`,
         {'header--expandable': this.expanding !== attribute && this.expandables.includes(attribute)}]
     },
     cellClass (attribute, recordId) {
       return [`cell--${attribute}`,
-      {'cell--focus': this.interactables.includes(attribute) && this.focusCell.recordId === recordId && this.focusCell.attribute === attribute}]
+        {'cell--focus': (this.interactables.includes(attribute) || this.hasDetals.includes(attribute)) &&
+          this.focusCell.recordId === recordId && this.focusCell.attribute === attribute}]
     },
     expandCol (attribute, event) {
       if (this.showMenu) return
@@ -148,13 +157,14 @@ export default {
       this.expandCol(attribute, event)
     },
     onCellClick (attribute, id, event) {
-      if (this.focusCell.recordId === id && this.focusCell.attribute === attribute) {
-        this.clearFocusCell()
-      } else {
-        this.focusCell.recordId = id
-        this.focusCell.attribute = attribute
-        this.expandCol(attribute, event)
-      }
+      // behave as same as clicking header if it's expanable but not expanded yet
+      if (this.expandables.includes(attribute) && this.expanding !== attribute) return this.onHeaderClick(attribute, event)
+      // reset when clicking the same cell
+      if (this.focusCell.recordId === id && this.focusCell.attribute === attribute) return this.clearFocusCell()
+
+      this.focusCell.recordId = id
+      this.focusCell.attribute = attribute
+      this.expandCol(attribute, event)
     },
     openMenu (event) {
       const {x, y} = offsets(event)
@@ -245,10 +255,6 @@ table
   padding: $cell-padding 0
   overflow: hidden
   cursor: pointer
-
-  // position: relative
-  // background: $cell-color
-  // box-shadow: $shadow
 
 .cell--date
   font-weight: 900

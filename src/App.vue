@@ -29,4 +29,8 @@ body
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
   margin-top: 60px
+
+a
+  color: $primary-color
+  text-decoration: none
 </style>

@@ -1,44 +1,47 @@
 <template lang="pug">
-.dg-cell-menu
-  ul.panel
-    li.item: a.button(href="#") Compare with
-    li.item: a.button(href="#") Edit
-    li.item: a.button(href="#") View Revisions
+.dg-cell-detail
+  .panel(@click.stop.self="onClick")
+    slot
 </template>
 
 <script>
 export default {
-
+  methods: {
+    onClick () {
+      this.$emit('click')
+    }
+  }
 }
-
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 @import '../sass/variables'
 
-.dg-cell-menu
+.dg-cell-detail
   position: absolute
   z-index: 100
-  top: 100%
+  top: 0
   left: 0
+  right: 0
 
 .panel
   display: inline-block
+  box-sizing: border-box
+  width: 100%
   list-style: none
   margin: 0
-  padding: 0.5em 2em 0.5em 1em
+  padding: 0 $cell-padding $cell-padding $cell-padding
   background: $cell-color
   box-shadow: $shadow
 
 .item
+  color: $secondary-color
+  font-weight: 900
   margin: 1.2em
   vertical-align: middle
   user-select: none
   cursor: pointer
 
-.button
-  color: $secondary-color
-  font-weight: 900
   &:hover
     color: #fff
 </style>
