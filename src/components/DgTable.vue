@@ -181,6 +181,7 @@ export default {
       this.expandCol(attribute, event)
     },
     onCellClick (attribute, id, event) {
+      this.closeFilterMenu()
       // behave as same as clicking header if it's expanable but not expanded yet
       if (this.expandables.includes(attribute) && this.expanding !== attribute) return this.onHeaderClick(attribute, event)
       // reset when clicking the same cell
