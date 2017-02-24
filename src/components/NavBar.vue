@@ -7,7 +7,7 @@ nav
 </template>
 
 <script>
-import Icon from 'components/icon'
+import Icon from 'components/Icon'
 
 export default {
   props: {
