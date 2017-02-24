@@ -2,11 +2,11 @@
 .dg-menu(:style="posStyle")
   .panel
     .option(v-for="(value, key) in options", v-if="!shouldBeEscaped(key)")
-      round-check-box(:label="key | capitalize", v-model="options[key]", :isBlock="true")
+      round-checkbox(:label="key | capitalize", v-model="options[key]", :isBlock="true")
 </template>
 
 <script>
-import RoundCheckBox from 'components/RoundCheckBox'
+import RoundCheckbox from 'components/RoundCheckbox'
 export default {
   props: {
     position: Object,
@@ -14,7 +14,7 @@ export default {
     escaped: Array
   },
   components: {
-    RoundCheckBox
+    RoundCheckbox
   },
   computed: {
     posStyle () {

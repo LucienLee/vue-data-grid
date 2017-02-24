@@ -6,7 +6,9 @@
         th.header--date(key="header-date")
         th.header(v-for="attribute in filteredAttributes",
           :key="'header--'+attribute", :class="headerClass(attribute)",
-          @click="onHeaderClick(attribute, $event)", @contextmenu.prevent="openMenu") {{ attribute | capitalize }}
+          @click.self="onHeaderClick(attribute, $event)", @contextmenu.prevent="openMenu") {{ attribute | capitalize }}
+          dg-filter(v-if="filterables.includes(attribute)", :isActive="activefilterables[attribute]",
+            @change="onFilterMenuChange(attribute, $event)", @sort="onSort(attribute, $event)")
     tbody
       transition-group(v-for="(record, index) in sortedRecords", name="fade", tag="tr")
         td.cell.cell--date(v-if="isfirstOfDateGroup(index)", key="cell-date", :rowspan="getNumOfDateGroupByIndex(index)")
@@ -30,11 +32,13 @@ import moment from 'moment'
 import _ from 'lodash'
 import { TweenMax, Linear } from 'gsap'
 import { records } from '../data.json'
+import settings from '../tableSettings'
 import { toCurrency, toMMMMYYYY, capitalize, toGMapQuery } from 'utils/filters'
 import { offsets } from 'utils/mouse'
 import DgMenu from 'components/DgMenu'
 import DgCellMenu from 'components/DgCellMenu'
 import DgCellDetail from 'components/DgCellDetail'
+import DgFilter from 'components/DgFilter'
 
 Vue.filter('toCurrency', toCurrency)
 Vue.filter('toMMMMYYYY', toMMMMYYYY)
@@ -44,26 +48,28 @@ export default {
   components: {
     DgMenu,
     DgCellMenu,
-    DgCellDetail
+    DgCellDetail,
+    DgFilter
   },
   data () {
+    let sortOrders = {}
+    let activefilterables = {}
+    settings.filterables.forEach((attribute) => {
+      sortOrders[attribute] = 0
+      activefilterables[attribute] = false
+    })
     return {
-      attributes: {
-        customer: true,
-        company: true,
-        contact: true,
-        address: true,
-        revenue: true,
-        VAT: true,
-        totalPrice: true,
-        status: true
-      },
-      expandables: ['company', 'contact', 'address'],
-      interactables: ['revenue', 'VAT', 'totalPrice'],
-      currencies: ['revenue', 'VAT', 'totalPrice'],
-      hasDetails: ['address'],
-      omitOnMenu: ['customer'],
       records: records,
+      attributes: settings.attributes,
+      expandables: settings.expandables,
+      interactables: settings.interactables,
+      currencies: settings.currencies,
+      hasDetails: settings.hasDetails,
+      filterables: settings.filterables,
+      omitOnMenu: settings.omitOnMenu,
+      sortAttribute: '',
+      sortOrders: sortOrders,
+      activefilterables: activefilterables,
       expanding: '',
       focusCell: {
         recordId: '',
@@ -79,9 +85,22 @@ export default {
   },
   computed: {
     sortedRecords () {
-      return this.records.sort((a, b) => {
-        return moment(a.date).isBefore(b.date) ? -1 : 1
-      })
+      let {sortAttribute, sortOrders, records} = this
+      const order = sortOrders[sortAttribute] || 0
+      if (sortAttribute) {
+        return records.slice().sort((a, b) => {
+          const aSort = a[sortAttribute]
+          const bSort = b[sortAttribute]
+          const localOrder = (aSort === bSort ? 0 : aSort > bSort ? 1 : -1) * order
+          const aDate = moment(a.date.replace(/(-\d+)$/, ''))
+          const bDate = moment(b.date.replace(/(-\d+)$/, ''))
+          return moment(aDate).isSame(bDate) ? localOrder : moment(aDate).isBefore(bDate) ? -1 : 1
+        })
+      } else {
+        return records.slice().sort((a, b) => {
+          return moment(a.date).isBefore(b.date) ? -1 : 1
+        })
+      }
     },
     filteredAttributes () {
       return Object.keys(this.attributes).filter((el) => {
@@ -158,6 +177,7 @@ export default {
     },
     onHeaderClick (attribute, event) {
       this.clearFocusCell()
+      this.closeFilterMenu()
       this.expandCol(attribute, event)
     },
     onCellClick (attribute, id, event) {
@@ -183,6 +203,16 @@ export default {
     clearFocusCell () {
       this.focusCell.recordId = ''
       this.focusCell.attribute = ''
+    },
+    closeFilterMenu () {
+      for (let attribute in this.activefilterables) this.activefilterables[attribute] = false
+    },
+    onSort (attribute, order) {
+      this.sortAttribute = order ? attribute : ''
+      this.sortOrders[attribute] = order
+    },
+    onFilterMenuChange (attribute, active) {
+      this.activefilterables[attribute] = active
     }
   }
 }
@@ -247,7 +277,7 @@ table
 
 .cell--focus, .cell--focus:hover
   background: $cell-color
-  box-shadow: 4px 0 2px 0 rgba(#000, 0.24)
+  box-shadow: $half-shadow
 
 
 .cell-content
@@ -266,6 +296,5 @@ table
 
 .cell--customer
   background: $hover-color
-
 
 </style>
