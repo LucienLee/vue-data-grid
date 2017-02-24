@@ -1,7 +1,7 @@
 <template lang="pug">
 .filter(:class="{'filter--active': isActive}")
   img.square(src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")
-  .button(@click="isActive = !isActive")
+  .button(@click="onActive")
     icon.icon--filter(symbol="filter")
   transition(name="fade")
     .panel(v-if="isActive")
@@ -19,11 +19,10 @@ import Icon from 'components/Icon'
 
 export default {
   props: {
-    attribute: String
+    isActive: Boolean
   },
   data () {
     return {
-      isActive: false,
       sort: {
         ascending: false,
         descending: false
@@ -35,6 +34,9 @@ export default {
     Icon
   },
   methods: {
+    onActive () {
+      this.$emit('change', !this.isActive)
+    },
     onSortCheck (key, value) {
       let order = 0
       this.sort[key] = value

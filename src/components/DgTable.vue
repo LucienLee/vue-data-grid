@@ -6,8 +6,9 @@
         th.header--date(key="header-date")
         th.header(v-for="attribute in filteredAttributes",
           :key="'header--'+attribute", :class="headerClass(attribute)",
-          @click="onHeaderClick(attribute, $event)", @contextmenu.prevent="openMenu") {{ attribute | capitalize }}
-          dg-filter(v-if="filterables.includes(attribute)", @sort="onSort(attribute, $event)")
+          @click.self="onHeaderClick(attribute, $event)", @contextmenu.prevent="openMenu") {{ attribute | capitalize }}
+          dg-filter(v-if="filterables.includes(attribute)", :isActive="activefilterables[attribute]",
+            @change="onFilterMenuChange(attribute, $event)", @sort="onSort(attribute, $event)")
     tbody
       transition-group(v-for="(record, index) in sortedRecords", name="fade", tag="tr")
         td.cell.cell--date(v-if="isfirstOfDateGroup(index)", key="cell-date", :rowspan="getNumOfDateGroupByIndex(index)")
@@ -52,8 +53,10 @@ export default {
   },
   data () {
     let sortOrders = {}
+    let activefilterables = {}
     settings.filterables.forEach((attribute) => {
       sortOrders[attribute] = 0
+      activefilterables[attribute] = false
     })
     return {
       records: records,
@@ -66,6 +69,7 @@ export default {
       omitOnMenu: settings.omitOnMenu,
       sortAttribute: '',
       sortOrders: sortOrders,
+      activefilterables: activefilterables,
       expanding: '',
       focusCell: {
         recordId: '',
@@ -173,6 +177,7 @@ export default {
     },
     onHeaderClick (attribute, event) {
       this.clearFocusCell()
+      this.closeFilterMenu()
       this.expandCol(attribute, event)
     },
     onCellClick (attribute, id, event) {
@@ -199,9 +204,15 @@ export default {
       this.focusCell.recordId = ''
       this.focusCell.attribute = ''
     },
+    closeFilterMenu () {
+      for (let attribute in this.activefilterables) this.activefilterables[attribute] = false
+    },
     onSort (attribute, order) {
       this.sortAttribute = order ? attribute : ''
       this.sortOrders[attribute] = order
+    },
+    onFilterMenuChange (attribute, active) {
+      this.activefilterables[attribute] = active
     }
   }
 }
