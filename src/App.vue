@@ -1,6 +1,6 @@
 <template lang="pug">
 #app
-  nav-bar
+  nav-bar(name="Lucien Lee")
   dg-table.table
 </template>
 
@@ -22,7 +22,7 @@ export default {
 @import "./sass/variables"
 
 body
-  font-size: 12px
+  font-size: 14px
   background: $bg-color
   color: $text-color
   margin: 0
