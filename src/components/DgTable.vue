@@ -7,7 +7,7 @@
         th.header(v-for="attribute in filteredAttributes",
           :key="'header--'+attribute", :class="headerClass(attribute)",
           @click="onHeaderClick(attribute, $event)", @contextmenu.prevent="openMenu") {{ attribute | capitalize }}
-          dg-filter(v-if="filterables.includes(attribute)")
+          dg-filter(v-if="filterables.includes(attribute)", @sort="onSort(attribute, $event)")
     tbody
       transition-group(v-for="(record, index) in sortedRecords", name="fade", tag="tr")
         td.cell.cell--date(v-if="isfirstOfDateGroup(index)", key="cell-date", :rowspan="getNumOfDateGroupByIndex(index)")
@@ -43,14 +43,6 @@ Vue.filter('toCurrency', toCurrency)
 Vue.filter('toMMMMYYYY', toMMMMYYYY)
 Vue.filter('capitalize', capitalize)
 
-let conditionsStore = settings.filterables.reduce((acc, cur) => {
-  acc[cur] = {
-    sort: '',
-    range: []
-  }
-  return acc
-}, {})
-
 export default {
   components: {
     DgMenu,
@@ -59,16 +51,21 @@ export default {
     DgFilter
   },
   data () {
+    let sortOrders = {}
+    settings.filterables.forEach((attribute) => {
+      sortOrders[attribute] = 0
+    })
     return {
+      records: records,
       attributes: settings.attributes,
       expandables: settings.expandables,
       interactables: settings.interactables,
       currencies: settings.currencies,
       hasDetails: settings.hasDetails,
       filterables: settings.filterables,
-      conditionsOfFilterables: conditionsStore,
-      omitOnMenu: ['customer'],
-      records: records,
+      omitOnMenu: settings.omitOnMenu,
+      sortAttribute: '',
+      sortOrders: sortOrders,
       expanding: '',
       focusCell: {
         recordId: '',
@@ -84,9 +81,22 @@ export default {
   },
   computed: {
     sortedRecords () {
-      return this.records.sort((a, b) => {
-        return moment(a.date).isBefore(b.date) ? -1 : 1
-      })
+      let {sortAttribute, sortOrders, records} = this
+      const order = sortOrders[sortAttribute] || 0
+      if (sortAttribute) {
+        return records.slice().sort((a, b) => {
+          const aSort = a[sortAttribute]
+          const bSort = b[sortAttribute]
+          const localOrder = (aSort === bSort ? 0 : aSort > bSort ? 1 : -1) * order
+          const aDate = moment(a.date.replace(/(-\d+)$/, ''))
+          const bDate = moment(b.date.replace(/(-\d+)$/, ''))
+          return moment(aDate).isSame(bDate) ? localOrder : moment(aDate).isBefore(bDate) ? -1 : 1
+        })
+      } else {
+        return records.slice().sort((a, b) => {
+          return moment(a.date).isBefore(b.date) ? -1 : 1
+        })
+      }
     },
     filteredAttributes () {
       return Object.keys(this.attributes).filter((el) => {
@@ -188,6 +198,10 @@ export default {
     clearFocusCell () {
       this.focusCell.recordId = ''
       this.focusCell.attribute = ''
+    },
+    onSort (attribute, order) {
+      this.sortAttribute = order ? attribute : ''
+      this.sortOrders[attribute] = order
     }
   }
 }

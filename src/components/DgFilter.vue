@@ -7,7 +7,7 @@
     .panel(v-if="isActive")
       .control
         p.control-label SORT
-        round-checkbox.sortOption(v-for="(val, key) in sort", :label="key", :value="sort[key]", :isBlock="false", @input="onCheck(key, $event)")
+        round-checkbox.sortOption(v-for="(val, key) in sort", :label="key", :value="sort[key]", :isBlock="false", @input="onSortCheck(key, $event)")
       .control
         p.control-label LIMIT RANGE
 
@@ -19,6 +19,7 @@ import Icon from 'components/Icon'
 
 export default {
   props: {
+    attribute: String
   },
   data () {
     return {
@@ -34,14 +35,22 @@ export default {
     Icon
   },
   methods: {
-    onCheck (key, value) {
-      console.log(key, value)
+    onSortCheck (key, value) {
+      let order = 0
+      this.sort[key] = value
       if (value) {
         for (let prop in this.sort) {
-          if (prop !== key) this.$emit('input', {key, value: false})
+          if (prop !== key) {
+            this.sort[prop] = false
+          }
         }
       }
-      this.$emit('input', {key: key, value: value})
+      if (this.sort.ascending) {
+        order = 1
+      } else if (this.sort.descending) {
+        order = -1
+      }
+      this.$emit('sort', order)
     }
   }
 }
