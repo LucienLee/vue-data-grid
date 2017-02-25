@@ -24,6 +24,8 @@ yarn run deploy
 ## Feature
 
 - Load data from [json](https://github.com/LucienLee/vue-data-grid/blob/master/src/data.json) and import table interaction [configuration](https://github.com/LucienLee/vue-data-grid/blob/master/src/tableSettings.js), which is flexible and scalable ([data source](https://docs.google.com/spreadsheets/d/1PFbZIAipjNIG90BXIzpFwRu7omXYMhh3e1-tldrAv-I/edit?usp=sharing) used in demo).
+- Present data in real `table` tag, which keep html semantic
+- Load icons via svg sprite, which is resuable and pixel perfact
 - Group data by month and year automatically
 - Long contents in cells are trimmed automatically, which are expandable by clicking the columns
 - The length of expanding columns are calculated by data automatically
