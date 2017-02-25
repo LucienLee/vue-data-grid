@@ -19,7 +19,7 @@ export default {
 
 .dg-cell-detail
   position: absolute
-  z-index: 100
+  z-index: $popup-index
   top: 0
   left: 0
   right: 0

@@ -37,7 +37,7 @@ export default {
 @import "../sass/variables"
 .dg-menu
   position: absolute
-  z-index: 100
+  z-index: $popup-index
 
 .panel
   background: $menu-color

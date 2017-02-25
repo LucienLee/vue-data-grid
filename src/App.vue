@@ -34,7 +34,7 @@ body
   -moz-osx-font-smoothing: grayscale
 
 .table
-  margin-top: 60px
+  margin: 60px 0
 
 a
   color: $primary-color

@@ -31,7 +31,7 @@ $icon-rect-size: 1.8em
 
 .dg-cell-menu
   position: absolute
-  z-index: 100
+  z-index: $popup-index
   top: 100%
   left: 0
 
