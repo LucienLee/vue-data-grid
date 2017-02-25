@@ -10,11 +10,12 @@
         round-checkbox.sortOption(v-for="(val, key) in sort", :label="key", :value="sort[key]", :isBlock="false", @input="onSortCheck(key, $event)")
       .control
         p.control-label LIMIT RANGE
-
+        multi-range-slider(:min="range['min']", :max="range['max']", v-model="range.value")
 </template>
 
 <script>
 import RoundCheckbox from 'components/RoundCheckbox'
+import MultiRangeSlider from 'components/MultiRangeSlider'
 import Icon from 'components/Icon'
 
 export default {
@@ -26,11 +27,17 @@ export default {
       sort: {
         ascending: false,
         descending: false
+      },
+      range: {
+        min: 0,
+        max: 10000,
+        value: [0, 10000]
       }
     }
   },
   components: {
     RoundCheckbox,
+    MultiRangeSlider,
     Icon
   },
   methods: {
@@ -72,6 +79,7 @@ export default {
   z-index: $popup-index
   cursor: pointer
   transition: background $medium
+  width: 3em // fix firefox issue
 
 .filter--active
   background: $cell-color
