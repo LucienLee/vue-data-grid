@@ -215,6 +215,7 @@ export default {
       this.menuPos.x = x + event.target.offsetLeft
       this.menuPos.y = y + event.target.offsetTop
       this.clearFocusCell()
+      this.closeFilterMenu()
       this.showMenu = true
     },
     closeMenu () {
