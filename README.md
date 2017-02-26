@@ -30,5 +30,5 @@ yarn run deploy
 - Long contents in cells are trimmed automatically, which are expandable by clicking the columns
 - The length of expanding columns are calculated by data automatically
 - Cells have more menus or details, such as adding google map query links automatically
-- Sort data by ascending or descending and filter data by range (filter is under constructing)
+- Sort data by ascending or descending and filter data by range, whose bounds are calculated by data automatically
 - Select columns to show by opening context menu with right click on header
