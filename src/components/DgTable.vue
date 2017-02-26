@@ -3,16 +3,16 @@
   table(@click="closeMenu")
     thead
       transition-group(name="fade", tag="tr")
-        th.header--date(key="header-date")
+        th.header--date(key="header--date")
         th.header(v-for="attribute in filteredAttributes",
           :key="'header--'+attribute", :class="headerClass(attribute)",
           @click.self="onHeaderClick(attribute, $event)", @contextmenu.prevent="openMenu") {{ attribute | capitalize }}
           dg-filter(v-if="filterables.includes(attribute)", :isActive="activefilterables[attribute]",
             :bound="filterBounds[attribute]", :range="filterRanges[attribute]",
             @change="onFilterMenuChange(attribute, $event)", @sort="onSort(attribute, $event)", @range="onRange(attribute, $event)")
-    tbody
-      transition-group(v-for="(record, index) in sortedRecords", name="fade", tag="tr")
-        td.cell.cell--date(v-if="isfirstOfDateGroup(index)", key="cell-date", :rowspan="getNumOfDateGroupByIndex(index)")
+    transition-group(name="fade", tag="tbody")
+      transition-group(v-for="(record, index) in sortedRecords", :key="index", name="fade", tag="tr")
+        td.cell.cell--date(v-if="isfirstOfDateGroup(index)", key="cell--date", :rowspan="getNumOfDateGroupByIndex(index)")
           span.cell-content {{ record['date'] | toMMMMYYYY }}
         td.cell(v-for="attribute in filteredAttributes",
           :key="'cell--' + attribute", :class="cellClass(attribute, record['uid'])")
