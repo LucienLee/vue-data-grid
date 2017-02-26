@@ -8,7 +8,8 @@
           :key="'header--'+attribute", :class="headerClass(attribute)",
           @click.self="onHeaderClick(attribute, $event)", @contextmenu.prevent="openMenu") {{ attribute | capitalize }}
           dg-filter(v-if="filterables.includes(attribute)", :isActive="activefilterables[attribute]",
-            @change="onFilterMenuChange(attribute, $event)", @sort="onSort(attribute, $event)")
+            :bound="filterBounds[attribute]", :range="filterRanges[attribute]",
+            @change="onFilterMenuChange(attribute, $event)", @sort="onSort(attribute, $event)", @range="onRange(attribute, $event)")
     tbody
       transition-group(v-for="(record, index) in sortedRecords", name="fade", tag="tr")
         td.cell.cell--date(v-if="isfirstOfDateGroup(index)", key="cell-date", :rowspan="getNumOfDateGroupByIndex(index)")
@@ -33,7 +34,7 @@ import _ from 'lodash'
 import { TweenMax, Linear } from 'gsap'
 import { records } from '../data.json'
 import settings from '../tableSettings'
-import { toCurrency, toMMMMYYYY, capitalize, toGMapQuery } from 'utils/filters'
+import { toCurrency, toMMMMYYYY, capitalize, toGMapQuery, toUpperMagnitude } from 'utils/filters'
 import { offsets } from 'utils/mouse'
 import DgMenu from 'components/DgMenu'
 import DgCellMenu from 'components/DgCellMenu'
@@ -53,10 +54,16 @@ export default {
   },
   data () {
     let sortOrders = {}
+    let filterRanges = {}
+    let filterBounds = {}
     let activefilterables = {}
     settings.filterables.forEach((attribute) => {
-      sortOrders[attribute] = 0
       activefilterables[attribute] = false
+      sortOrders[attribute] = 0
+      filterBounds[attribute] = [0, toUpperMagnitude(records.reduce((acc, cur) => {
+        return cur[attribute] > acc ? cur[attribute] : acc
+      }, 0))]
+      filterRanges[attribute] = _.clone(filterBounds[attribute])
     })
     return {
       records: records,
@@ -69,6 +76,8 @@ export default {
       omitOnMenu: settings.omitOnMenu,
       sortAttribute: '',
       sortOrders: sortOrders,
+      filterRanges: filterRanges,
+      filterBounds: filterBounds,
       activefilterables: activefilterables,
       expanding: '',
       focusCell: {
@@ -85,10 +94,19 @@ export default {
   },
   computed: {
     sortedRecords () {
-      let {sortAttribute, sortOrders, records} = this
+      const {sortAttribute, sortOrders, filterRanges, records} = this
       const order = sortOrders[sortAttribute] || 0
+
+      // Filtered fitted in ranges records
+      const filteredRecords = records.filter((record) => {
+        return Object.keys(filterRanges).reduce((acc, key) => {
+          return filterRanges[key][0] <= record[key] && filterRanges[key][1] >= record[key]
+        }, true)
+      })
+
       if (sortAttribute) {
-        return records.slice().sort((a, b) => {
+        // Sort by sortAttribute locally and by date globally
+        return filteredRecords.slice().sort((a, b) => {
           const aSort = a[sortAttribute]
           const bSort = b[sortAttribute]
           const localOrder = (aSort === bSort ? 0 : aSort > bSort ? 1 : -1) * order
@@ -97,7 +115,8 @@ export default {
           return moment(aDate).isSame(bDate) ? localOrder : moment(aDate).isBefore(bDate) ? -1 : 1
         })
       } else {
-        return records.slice().sort((a, b) => {
+        // Only sort by date
+        return filteredRecords.slice().sort((a, b) => {
           return moment(a.date).isBefore(b.date) ? -1 : 1
         })
       }
@@ -212,7 +231,11 @@ export default {
       this.sortAttribute = order ? attribute : ''
       this.sortOrders[attribute] = order
     },
+    onRange (attribute, range) {
+      this.filterRanges[attribute] = range
+    },
     onFilterMenuChange (attribute, active) {
+      this.clearFocusCell()
       this.activefilterables[attribute] = active
     }
   }
