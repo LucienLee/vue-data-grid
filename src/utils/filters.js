@@ -18,4 +18,8 @@ function toGMapQuery (address) {
   return `https://www.google.com/maps?q=${address.replace(/\s/g, '+')}`
 }
 
-export {toCurrency, toMMMMYYYY, capitalize, toGMapQuery}
+function toUpperMagnitude (num) {
+  return Math.pow(10, num.toString().length)
+}
+
+export {toCurrency, toMMMMYYYY, capitalize, toGMapQuery, toUpperMagnitude}

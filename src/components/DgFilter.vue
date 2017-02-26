@@ -10,7 +10,7 @@
         round-checkbox.sortOption(v-for="(val, key) in sort", :label="key", :value="sort[key]", :isBlock="false", @input="onSortCheck(key, $event)")
       .control
         p.control-label LIMIT RANGE
-        multi-range-slider(:min="range['min']", :max="range['max']", v-model="range.value")
+        multi-range-slider(:min="bound[0]", :max="bound[1]", :value="range", @input="onRangeChange")
 </template>
 
 <script>
@@ -20,18 +20,15 @@ import Icon from 'components/Icon'
 
 export default {
   props: {
-    isActive: Boolean
+    isActive: Boolean,
+    bound: Array,
+    range: Array
   },
   data () {
     return {
       sort: {
         ascending: false,
         descending: false
-      },
-      range: {
-        min: 0,
-        max: 10000,
-        value: [0, 10000]
       }
     }
   },
@@ -60,6 +57,9 @@ export default {
         order = -1
       }
       this.$emit('sort', order)
+    },
+    onRangeChange (value) {
+      this.$emit('range', value)
     }
   }
 }

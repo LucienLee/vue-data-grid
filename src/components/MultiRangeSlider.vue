@@ -94,6 +94,13 @@ $knob-size: 16px
     transform: scale(1)
     +knob
 
+  &::-moz-focus-outer
+    border: 0
+
+  &::-moz-range-track
+    +bar
+    background: $track-color
+
   &::before
     content: ''
     +bar
