@@ -12,8 +12,8 @@
             @change="onFilterMenuChange(attribute, $event)", @sort="onSort(attribute, $event)", @range="onRange(attribute, $event)")
     transition-group(name="fade", tag="tbody")
       transition-group(v-for="(record, index) in sortedRecords", :key="index", name="fade", tag="tr")
-        td.cell.cell--date(v-if="isfirstOfDateGroup(index)", key="cell--date", :rowspan="getNumOfDateGroupByIndex(index)")
-          span.cell-content {{ record['date'] | toMMMMYYYY }}
+        td.cell.cell--placeholder(key="cell--date", :class="{'is-visible': isfirstOfDateGroup(index)}")
+          span.cell-content.forgedCell(:style="getHeightStyleByDate(record['date'])") {{ record['date'] | toMMMMYYYY }}
         td.cell(v-for="attribute in filteredAttributes",
           :key="'cell--' + attribute", :class="cellClass(attribute, record['uid'])")
           transition(name="fade")
@@ -153,8 +153,10 @@ export default {
         ? true
         : toMMMMYYYY(this.sortedRecords[index].date) !== toMMMMYYYY(this.sortedRecords[index - 1].date)
     },
-    getNumOfDateGroupByIndex (index) {
-      return this.numOfDateGroup[toMMMMYYYY(this.sortedRecords[index].date)]
+    getHeightStyleByDate (date) {
+      return {
+        height: `calc(${this.numOfDateGroup[toMMMMYYYY(date)] * 100}% + 1px)` // 1px for cell collapsed
+      }
     },
     getAddressLink (text) {
       return toGMapQuery(text)
@@ -304,6 +306,12 @@ table
   background: $cell-color
   box-shadow: $half-shadow
 
+.cell--placeholder
+  border: none
+  visibility: hidden
+
+.cell--customer
+  background: $hover-color
 
 .cell-content
   display: inline-block
@@ -315,11 +323,16 @@ table
   overflow: hidden
   cursor: pointer
 
-.cell--date
+.forgedCell
+  display: flex
+  align-items: center
+  position: absolute
+  top: 0
+  padding-left: $cell-padding
+  border: 1px solid $border-color
+  border-right: none
+  background: $hover-color
   font-weight: 900
-  background: $hover-color
-
-.cell--customer
-  background: $hover-color
+  transition: $fast height
 
 </style>
