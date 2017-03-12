@@ -5,6 +5,7 @@ nav
     li.item.user: a(href="#") {{ name }}
     li.item.icon: a(href="#"): icon(symbol="gear")
     li.item.icon: a(href="#"): icon(symbol="power")
+    li.item.icon: a(href="https://github.com/LucienLee/vue-data-grid"): icon(symbol="github")
 </template>
 
 <script>
