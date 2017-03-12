@@ -1,5 +1,6 @@
 <template lang="pug">
 nav
+  img.logo(src="../assets/logo.png")
   ul.menu
     li.item.user: a(href="#") {{ name }}
     li.item.icon: a(href="#"): icon(symbol="gear")
@@ -24,10 +25,18 @@ export default {
 @import "../sass/variables"
 
 nav
-  position: relative
+  display: flex
+  align-items: center
+  position: fixed
+  top: 0
+  z-index: $nav-index
   width: 100%
   height: $nav-height
   background: $primary-color
+
+.logo
+  width: 72px
+  margin: 0 1em
 
 .menu
   position: absolute
