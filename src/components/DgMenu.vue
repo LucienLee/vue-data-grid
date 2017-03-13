@@ -7,10 +7,17 @@
 
 <script>
 import RoundCheckbox from 'components/RoundCheckbox'
+
 export default {
   props: {
-    position: Object,
-    options: Object,
+    position: {
+      type: Object,
+      required: true
+    },
+    options: {
+      type: Object,
+      required: true
+    },
     escaped: Array
   },
   components: {
@@ -30,11 +37,11 @@ export default {
     }
   }
 }
-
 </script>
 
 <style lang="sass" scoped>
 @import "../sass/variables"
+
 .dg-menu
   position: absolute
   z-index: $popup-index
@@ -46,5 +53,4 @@ export default {
 
 .option
   margin: 1em 0
-
 </style>

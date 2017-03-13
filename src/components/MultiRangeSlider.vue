@@ -13,9 +13,18 @@ const rangeColor = '#15a4fa'
 
 export default {
   props: {
-    min: Number,
-    max: Number,
-    value: Array
+    min: {
+      type: Number,
+      required: true
+    },
+    max: {
+      type: Number,
+      required: true
+    },
+    value: {
+      type: Array,
+      required: true
+    }
   },
   computed: {
     rangePercentage () {
@@ -25,6 +34,7 @@ export default {
       }
     },
     barLenStyle () {
+      // exploit linear gradient background to draw highlight segement
       return {background: `linear-gradient(to right, transparent ${this.rangePercentage.start}, ${rangeColor} ${this.rangePercentage.start}, ${rangeColor} ${this.rangePercentage.end}, transparent ${this.rangePercentage.end}) no-repeat`}
     }
   },
@@ -72,7 +82,7 @@ $knob-size: 16px
   cursor: pointer
   z-index: 3
 
-
+/* Slider */
 .multiRange
   display: inline-block
   vertical-align: top
@@ -84,12 +94,14 @@ $knob-size: 16px
   -moz-appearance: none
   background: none
 
+  // webit knob
   &::-webkit-slider-thumb
     position: relative
     -webkit-appearance: none
     -moz-appearance: none
     +knob
 
+  // moz knob
   &::-moz-range-thumb
     transform: scale(1)
     +knob
@@ -97,13 +109,15 @@ $knob-size: 16px
   &::-moz-focus-outer
     border: 0
 
+  // moz base track bar
   &::-moz-range-track
     +bar
     background: $track-color
 
+  // webkit base track bar
   &::before
-    content: ''
     +bar
+    content: ''
     background: $track-color
 
 .multiRange--min
@@ -112,10 +126,12 @@ $knob-size: 16px
 .multiRange--max
   position: relative
 
+// fore track bar
 .rangeBar
   +bar
   z-index: 2
 
+/* Label */
 .rangeLabel
   @extend %clearfix
 

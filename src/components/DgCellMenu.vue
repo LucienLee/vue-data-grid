@@ -1,15 +1,10 @@
 <template lang="pug">
 .dg-cell-menu
   ul.panel
-    li.item: a.button(href="#")
-      span.icon.icon--compare: icon(symbol="compare")
-      span.label Compare with
-    li.item: a.button(href="#")
-      span.icon: icon(symbol="edit")
-      span.label Edit
-    li.item: a.button(href="#")
-      span.icon: icon(symbol="revision")
-      span.label View Revisions
+    li.item(v-for="item in items")
+      a.button(href="#")
+        span.icon(:class="item.class"): icon(:symbol="item.symbol")
+        span.label {{item.label}}
 </template>
 
 <script>
@@ -18,9 +13,25 @@ import Icon from 'components/Icon'
 export default {
   components: {
     Icon
+  },
+  data () {
+    return {
+      items: [
+        {
+          symbol: 'compare',
+          label: 'Compare with',
+          class: 'icon--compare'
+        }, {
+          symbol: 'edit',
+          label: 'Edit'
+        }, {
+          symbol: 'revision',
+          label: 'View Revisions'
+        }
+      ]
+    }
   }
 }
-
 </script>
 
 <style lang="sass" scoped>

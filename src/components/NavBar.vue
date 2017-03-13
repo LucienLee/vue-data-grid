@@ -2,7 +2,7 @@
 nav
   img.logo(src="../assets/logo.png")
   ul.menu
-    li.item.user: a(href="#") {{ name }}
+    li.item.user(v-if="name"): a(href="#") {{ name }}
     li.item.icon: a(href="#"): icon(symbol="gear")
     li.item.icon: a(href="#"): icon(symbol="power")
     li.item.icon: a(href="https://github.com/LucienLee/vue-data-grid"): icon(symbol="github")
@@ -19,7 +19,6 @@ export default {
     Icon
   }
 }
-
 </script>
 
 <style lang="sass" scoped>
@@ -44,8 +43,8 @@ nav
   right: 2em
   top: 0
   bottom: 0
-  list-style: none
   margin: 0
+  list-style: none
 
 .user
   line-height: $nav-height
@@ -53,8 +52,8 @@ nav
 .item
   display: inline-block
   vertical-align: middle
-  color: #fff
   margin: 0 0.5em
+  color: #fff
   a
     color: inherit
 

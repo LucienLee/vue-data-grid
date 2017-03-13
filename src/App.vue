@@ -1,7 +1,7 @@
 <template lang="pug">
 #app
   nav-bar(name="Lucien Lee")
-  dg-table.table
+  dg-table.dataTable
 </template>
 
 <script>
@@ -22,10 +22,14 @@ export default {
 @import "./sass/variables"
 
 body
-  font-size: 14px
+  font-size: $base-font-size
   background: $bg-color
   color: $text-color
   margin: 0
+
+a
+  color: $primary-color
+  text-decoration: none
 
 #app
   font-family: Lato, Arial, sans-serif
@@ -33,10 +37,6 @@ body
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
 
-.table
+.dataTable
   margin: $nav-height*2 0
-
-a
-  color: $primary-color
-  text-decoration: none
 </style>

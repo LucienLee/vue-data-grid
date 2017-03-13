@@ -1,3 +1,5 @@
+/* Pure functions for transforming data. */
+
 import moment from 'moment'
 
 function toCurrency (n) {
@@ -22,4 +24,4 @@ function toUpperMagnitude (num) {
   return Math.pow(10, num.toString().length)
 }
 
-export {toCurrency, toMMMMYYYY, capitalize, toGMapQuery, toUpperMagnitude}
+export { toCurrency, toMMMMYYYY, capitalize, toGMapQuery, toUpperMagnitude }

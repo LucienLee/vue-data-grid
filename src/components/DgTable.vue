@@ -1,9 +1,11 @@
 <template lang="pug">
 .dg-table
-  table(@click="closeMenu")
+  table.table(@click="closeMenu")
     thead
       transition-group(name="fade", tag="tr")
+        //- empty table head for date group
         th.header--date(key="header--date")
+        //- general table head
         th.header(v-for="attribute in filteredAttributes",
           :key="'header--'+attribute", :class="headerClass(attribute)",
           @click.self="onHeaderClick(attribute, $event)", @contextmenu.prevent="openMenu") {{ attribute | capitalize }}
@@ -12,8 +14,11 @@
             @change="onFilterMenuChange(attribute, $event)", @sort="onSort(attribute, $event)", @range="onRange(attribute, $event)")
     transition-group(name="fade", tag="tbody")
       transition-group(v-for="(record, index) in sortedRecords", :key="index", name="fade", tag="tr")
+        //- date group cell, instead of grouping by rowspan because that would cause jerky animation.
+        //- Please check rowspan branch on github
         td.cell.cell--placeholder(key="cell--date", :class="{'is-visible': isfirstOfDateGroup(index)}")
           span.cell-content.forgedCell(:style="getHeightStyleByDate(record['date'])") {{ record['date'] | toMMMMYYYY }}
+        //- general table cell
         td.cell(v-for="attribute in filteredAttributes",
           :key="'cell--' + attribute", :class="cellClass(attribute, record['uid'])")
           transition(name="fade")
@@ -67,24 +72,24 @@ export default {
     })
     return {
       records: records,
-      attributes: settings.attributes,
+      attributes: settings.attributes, // { attribute: boolean, ...}
       expandables: settings.expandables,
       interactables: settings.interactables,
       currencies: settings.currencies,
       hasDetails: settings.hasDetails,
       filterables: settings.filterables,
       omitOnMenu: settings.omitOnMenu,
-      sortAttribute: '',
-      sortOrders: sortOrders,
-      filterRanges: filterRanges,
-      filterBounds: filterBounds,
-      activefilterables: activefilterables,
-      expanding: '',
+      sortAttribute: '', // which attribute used to sort
+      sortOrders: sortOrders, // the order in each sortable attribute
+      filterRanges: filterRanges, // the filter ranges that user want
+      filterBounds: filterBounds, // the bounds of filters
+      activefilterables: activefilterables, // activating filters
+      expanding: '', // expanding attribute
       focusCell: {
         recordId: '',
         attribute: ''
       },
-      lastExpanded: '',
+      lastExpanded: '', // last expanding tween obj
       showMenu: false,
       menuPos: {
         x: 0,
@@ -130,7 +135,7 @@ export default {
       const dates = this.sortedRecords.map(el => el.date)
       return _.countBy(dates, toMMMMYYYY)
     },
-    maxLenOfCols () {
+    maxLenOfCols () { // maxiumn length of each attribute
       return this.records.reduce((acc, record) => {
         Object.keys(record).forEach((prop) => {
           if (acc[prop] < record[prop].length) {
@@ -196,6 +201,7 @@ export default {
         })
       }
     },
+    /* event handler */
     onHeaderClick (attribute, event) {
       this.clearFocusCell()
       this.closeFilterMenu()
@@ -212,6 +218,18 @@ export default {
       this.focusCell.attribute = attribute
       this.expandCol(attribute, event)
     },
+    onSort (attribute, order) {
+      this.sortAttribute = order ? attribute : ''
+      this.sortOrders[attribute] = order
+    },
+    onRange (attribute, range) {
+      this.filterRanges[attribute] = range
+    },
+    onFilterMenuChange (attribute, active) {
+      this.clearFocusCell()
+      this.activefilterables[attribute] = active
+    },
+    /*  macro helper */
     openMenu (event) {
       const rect = this.$el.getBoundingClientRect()
       const OFFSET = 1 // show menu with 1px offset to mouse
@@ -232,17 +250,6 @@ export default {
     },
     closeFilterMenu () {
       for (let attribute in this.activefilterables) this.activefilterables[attribute] = false
-    },
-    onSort (attribute, order) {
-      this.sortAttribute = order ? attribute : ''
-      this.sortOrders[attribute] = order
-    },
-    onRange (attribute, range) {
-      this.filterRanges[attribute] = range
-    },
-    onFilterMenuChange (attribute, active) {
-      this.clearFocusCell()
-      this.activefilterables[attribute] = active
     }
   }
 }
@@ -258,9 +265,9 @@ $fixed-cell-width: 10em
 $arrow-size: 8px
 
 .dg-table
-  position: relative
+  position: relative // for context menu position
 
-table
+.table
   table-layout: fixed
   width: 80%
   margin: 0 auto

@@ -1,16 +1,21 @@
 <template lang="pug">
 label.roundCheckBox(:class="{'roundCheckBox--block': isBlock}")
   input(type="checkbox", :value="value", :checked="value", @change="onChange")
-  span.roundBox(:class="{'roundBox--checked':value}")
+  span.roundBox(:class="{'roundBox--checked': value}")
   span.label {{label}}
-
 </template>
 
 <script>
 export default {
   props: {
-    value: Boolean,
-    label: String,
+    value: {
+      type: Boolean,
+      required: true
+    },
+    label: {
+      type: String,
+      required: true
+    },
     isBlock: Boolean
   },
   methods: {
@@ -26,6 +31,7 @@ export default {
 
 $radio-size: 0.8em
 $shrink-factor: 0.6
+$border-color: #395374
 
 .roundCheckBox
   cursor: pointer
@@ -45,12 +51,13 @@ $shrink-factor: 0.6
 .roundBox
   position: relative
   display: inline-block
+  vertical-align: middle
   width: $radio-size
   height: $radio-size
-  border: 2px solid #395374
+  border: 2px solid $border-color
   border-radius: 50%
-  vertical-align: middle
 
+// Selected Dot
 .roundBox--checked::after
     content: ''
     position: absolute
