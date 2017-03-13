@@ -273,6 +273,7 @@ $arrow-size: 8px
   margin: 0 auto
   border-collapse: collapse
   text-align: left
+  overflow: hidden
 
 .header
   position: relative

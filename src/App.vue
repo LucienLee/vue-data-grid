@@ -38,5 +38,5 @@ a
   -moz-osx-font-smoothing: grayscale
 
 .dataTable
-  margin: $nav-height*2 0
+  margin: $nav-height*2 0 $nav-height
 </style>
