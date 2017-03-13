@@ -1,18 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="72px" height="72px" viewBox="0 0 72 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
-    <title>compare</title>
-    <desc>Created with Sketch.</desc>
-    <defs>
-        <path d="M36,55.2804176 C39.654121,57.6328761 44.0183056,59 48.7058824,59 C61.5708683,59 72,48.7025492 72,36 C72,23.2974508 61.5708683,13 48.7058824,13 C44.0183056,13 39.654121,14.3671239 36,16.7195824 C32.345879,14.3671239 27.9816944,13 23.2941176,13 C10.4291317,13 3.55271368e-15,23.2974508 3.55271368e-15,36 C3.55271368e-15,48.7025492 10.4291317,59 23.2941176,59 C27.9816944,59 32.345879,57.6328761 36,55.2804176 Z" id="path-1"></path>
-        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="72" height="46" fill="white">
-            <use xlink:href="#path-1"></use>
-        </mask>
-    </defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="compare">
-            <use id="Combined-Shape" stroke="#7691B4" mask="url(#mask-2)" stroke-width="12" xlink:href="#path-1"></use>
-            <path d="M36,53.5709288 C30.1892903,49.8828643 26.3328003,43.3917979 26.3328003,36 C26.3328003,28.6082021 30.1892903,22.1171357 36,18.4290712 C41.8107097,22.1171357 45.6671997,28.6082021 45.6671997,36 C45.6671997,43.3917979 41.8107097,49.8828643 36,53.5709288 Z" id="Combined-Shape" fill="#22A8FA"></path>
-        </g>
-    </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="path-1" d="M36 55.3c3.7 2.3 8 3.7 12.7 3.7C61.7 59 72 48.7 72 36S61.6 13 48.7 13c-4.7 0-9 1.4-12.7 3.7-3.7-2.3-8-3.7-12.7-3.7C10.3 13 0 23.3 0 36s10.4 23 23.3 23c4.7 0 9-1.4 12.7-3.7z"/><mask id="mask-2" width="72" height="46" x="0" y="0" fill="#fff"><use xlink:href="#path-1"/></mask></defs><g id="Page-1" fill="none" fill-rule="evenodd"><g id="compare"><use id="Combined-Shape" stroke="#7691B4" stroke-width="12" mask="url(#mask-2)" xlink:href="#path-1"/><path id="Combined-Shape" fill="#22A8FA" d="M36 53.6C30.2 50 26.3 43.4 26.3 36c0-7.4 4-14 9.7-17.6 5.8 3.7 9.7 10.2 9.7 17.6 0 7.4-4 14-9.7 17.6z"/></g></g></svg>
