@@ -35,7 +35,7 @@ import { TweenMax, Linear } from 'gsap'
 import { records } from '../data.json'
 import settings from '../tableSettings'
 import { toCurrency, toMMMMYYYY, capitalize, toGMapQuery, toUpperMagnitude } from 'utils/filters'
-import { offsets } from 'utils/mouse'
+import { normPagePosInEvent } from 'utils/mouse'
 import DgMenu from 'components/DgMenu'
 import DgCellMenu from 'components/DgCellMenu'
 import DgCellDetail from 'components/DgCellDetail'
@@ -213,9 +213,12 @@ export default {
       this.expandCol(attribute, event)
     },
     openMenu (event) {
-      const {x, y} = offsets(event)
-      this.menuPos.x = x + event.target.offsetLeft
-      this.menuPos.y = y + event.target.offsetTop
+      const rect = this.$el.getBoundingClientRect()
+      const OFFSET = 1 // show menu with 1px offset to mouse
+      event = normPagePosInEvent(event)
+
+      this.menuPos.x = event.pageX - rect.left + OFFSET
+      this.menuPos.y = event.pageY - rect.top + OFFSET
       this.clearFocusCell()
       this.closeFilterMenu()
       this.showMenu = true

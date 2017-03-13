@@ -1,17 +1,15 @@
-function offsets (e) {
+/* Mouse position calc */
+
+// normalize pageX and pageY in mouse event
+function normPagePosInEvent (e) {
   e = e || window.event
 
-  const target = e.target || e.srcElement
-  const style = target.currentStyle || window.getComputedStyle(target, null)
-  const borderLeftWidth = parseInt(style['borderLeftWidth'], 10)
-  const borderTopWidth = parseInt(style['borderTopWidth'], 10)
-  const rect = target.getBoundingClientRect()
-  const offsetX = e.clientX - borderLeftWidth - rect.left
-  const offsetY = e.clientY - borderTopWidth - rect.top
-
-  return {
-    x: offsetX,
-    y: offsetY
+  if (e.pageX === undefined) {
+    e.pageX = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft
+    e.pageY = e.clientY + document.body.scrollTop + document.documentElement.scrollTop
   }
+
+  return e
 }
-export {offsets}
+
+export { normPagePosInEvent }
